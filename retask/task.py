@@ -31,7 +31,12 @@ import json
 
 class Task:
     """
-    Generic Task class
+    Returns a new Task object, the information for the task is passed through
+    argument ``data``
+    
+    :kwarg data: Python object which contains information for the task.
+    Should be serialzable through ``JSON``.
+    
     """
     
     def __init__(self, data=None, raw= False):
@@ -43,13 +48,22 @@ class Task:
     @property        
     def data(self):
         """
-        Returns the data of the task
+        The python object containing information for the current task
+        
         """
         return json.loads(self._data)
     
 
     @property        
     def rawdata(self):
+        """
+        The string representation of the actual python objects for the task
+     
+        .. note:: 
+            This should not be used directly by the users. This is for internal use
+            only.        
+
+        """
         return self._data
     
             

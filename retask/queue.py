@@ -36,7 +36,11 @@ from task import Task
 
 class Queue:
     """
-    Generic Queue on Redis
+    Returns the ``Queue`` object with the given name. If the user
+    passes optional config dictionary with details for Redis
+    server, it will connect to that instance. By default it connects
+    to the localhost.
+    
     """
     def __init__(self, name, config = {}):
         self.name = name
@@ -51,7 +55,9 @@ class Queue:
     @property   
     def length(self):
         """
-        Returns the length of the queue
+        Gives the length of the queue. Returns ``None`` if the queue is not
+        connected.
+        
         """
         if not self.connected:
             return None
@@ -60,7 +66,23 @@ class Queue:
     
     def connect(self):
         """
-        Checks the connectivity with the redis server
+        Creates the connection with the redis server.
+        Return ``True`` if the connection works, else returns
+        ``False``. It does not take any arguments.
+    
+        :return: ``Boolean`` value
+          
+        .. note::
+  
+           After creating the ``Queue`` object the user should call
+           the ``connect`` method so create the connection.
+  
+        .. doctest::
+  
+           >>> from retask.queue import Queue
+           >>> q = Queue('test')
+           >>> q.connect()
+           True
         
         """
         config = self.config
@@ -76,7 +98,21 @@ class Queue:
           
     def dequeue(self):
         """
-        Gets the first task from the Queue
+        Returns a :class:`Task` object from the queue. Returns ``None`` if the
+        queue is empty.
+  
+        :return: :class:`Task` object from the queue
+        
+        .. doctest::
+  
+           >>> from retask.queue import Queue
+           >>> q = Queue('test')
+           >>> q.connect()
+           True
+           >>> t = q.dequeue()
+           >>> print t.data
+           {u'name': u'kushal'}        
+
         """
         if not self.connected:
             return None
@@ -90,8 +126,26 @@ class Queue:
     
     def enqueue(self, task):
         """
-        Sets the given task in the queue
-    
+        Enqueues the given :class:`Task` object to the queue and returns
+        a tuple. Value in index 0 is ``Boolean`` explaining the enqueue
+        operation is a success or not. Value at index 1 is string with 
+        error/success message (if any).
+        
+        :arg task: :class:`Task` object
+        
+        :return: Tuple with ``Boolean`` value and ``string`` message. 
+  
+        .. doctest::
+  
+           >>> from retask.queue import Queue
+           >>> q = Queue('test')
+           >>> q.connect()
+           True
+           >>> from retask.task import Task
+           >>> task = Task({'name':'kushal'})
+           >>> q.enqueue(task)
+           (True, 'Pushed')
+        
         """
         if not self.connected:
             return False, 'Not connected'

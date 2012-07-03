@@ -98,10 +98,10 @@ class Queue:
           
     def dequeue(self):
         """
-        Returns a :class:`Task` object from the queue. Returns ``None`` if the
+        Returns a :class:`~retask.task.Task` object from the queue. Returns ``None`` if the
         queue is empty.
   
-        :return: :class:`Task` object from the queue
+        :return: :class:`~retask.task.Task` object from the queue
         
         .. doctest::
   
@@ -126,12 +126,12 @@ class Queue:
     
     def enqueue(self, task):
         """
-        Enqueues the given :class:`Task` object to the queue and returns
+        Enqueues the given :class:`~retask.task.Task` object to the queue and returns
         a tuple. Value in index 0 is ``Boolean`` explaining the enqueue
         operation is a success or not. Value at index 1 is string with 
         error/success message (if any).
         
-        :arg task: :class:`Task` object
+        :arg task: ::class:`~retask.task.Task` object
         
         :return: Tuple with ``Boolean`` value and ``string`` message. 
   

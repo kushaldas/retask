@@ -34,8 +34,7 @@ class Task:
     Returns a new Task object, the information for the task is passed through
     argument ``data``
     
-    :kwarg data: Python object which contains information for the task.
-    Should be serialzable through ``JSON``.
+    :kwarg data: Python object which contains information for the task. Should be serialzable through ``JSON``.
     
     """
     

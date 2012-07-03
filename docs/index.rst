@@ -5,6 +5,12 @@
 
 Welcome to retask's documentation!
 ==================================
+retask is a python module to create and manage distributed task queues.
+
+It uses `Redis <http://redis.io>` to create task queues. User can enqueue
+ and dequeue tasks in the queues they manage. Each task can contain any 
+ serializable python objects. We use `JSON` internally to store the tasks
+ in the queues.
 
 Contents:
 

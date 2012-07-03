@@ -12,11 +12,20 @@ and dequeue tasks in the queues they manage. Each task can contain any
 serializable python objects. We use `JSON` internally to store the tasks
 in the queues.
 
+Dependencies
+------------
+- python-redis
+- mock
+- A running Redis server
+
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
+   retask.task
+   retask.queue
 
 
 Indices and tables

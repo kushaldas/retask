@@ -6,12 +6,11 @@ Introduction
 First requirement
 -----------------
 
-While working on `Darkserver <https://darkserver.fedoraproject.org>`_ I
-came through a point where I had to implement Task Queues for the  importer
-code and in kind of classical producer consumer problem.
+For various others projects I had to start looking for a
+simple task queue and solve kind of classical producer-consumer problems
+using them.
 
-This project started from that idea and then separated out to be an
-independent project itself.
+This project started from that idea.
 
 
 Why Redis

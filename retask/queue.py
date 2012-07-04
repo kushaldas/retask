@@ -34,7 +34,7 @@ from task import Task
 
 
 
-class Queue:
+class Queue(object):
     """
     Returns the ``Queue`` object with the given name. If the user
     passes optional config dictionary with details for Redis

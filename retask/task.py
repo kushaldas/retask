@@ -29,7 +29,7 @@ Task Class
 """
 import json
 
-class Task:
+class Task(object):
     """
     Returns a new Task object, the information for the task is passed through
     argument ``data``

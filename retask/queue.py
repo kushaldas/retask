@@ -44,6 +44,7 @@ class Queue(object):
     """
     def __init__(self, name, config = {}):
         self.name = name
+        self.internalname = 'retaskqueue-' + name 
         if not config:
             self.config = {'host':'localhost', 'port':6379, 'db':0,\
                            'password':None}
@@ -62,7 +63,7 @@ class Queue(object):
         if not self.connected:
             return None
         
-        return self.rdb.llen(self.name)
+        return self.rdb.llen(self.internalname)
     
     def connect(self):
         """
@@ -117,10 +118,10 @@ class Queue(object):
         if not self.connected:
             return None
         
-        if self.rdb.llen(self.name) == 0:
+        if self.rdb.llen(self.internalname) == 0:
             return None
         
-        data = self.rdb.rpop(self.name)
+        data = self.rdb.rpop(self.internalname)
         task = Task(data, True)
         return task
     
@@ -154,7 +155,7 @@ class Queue(object):
             return False, 'No data'
         try:
             #We can set the value to the queue
-            self.rdb.lpush(self.name, task.rawdata)
+            self.rdb.lpush(self.internalname, task.rawdata)
         except Exception, err:
             return False, str(err)
         return True, 'Pushed'

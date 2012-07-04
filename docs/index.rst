@@ -37,6 +37,19 @@ On Fedora you can start the service as *root*:
 
     # service redis start
 
+
+User Guide
+----------
+
+
+.. toctree::
+   :maxdepth: 2
+
+   user/intro
+   user/quickstart
+
+
+
 API Documentation
 -----------------
 
@@ -48,9 +61,7 @@ API Documentation
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 

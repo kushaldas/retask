@@ -22,7 +22,7 @@ __author__ = 'Kushal Das <kushaldas@gmail.com'
 __copyright__ = 'Copyright (c) 2012 Kushal Das'
 __license__ = 'MIT'
 __status__ = 'Development'
-__version__ = '0.1'
+__version__ = '0.2'
 
 """
 Task Class 

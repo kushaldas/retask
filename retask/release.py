@@ -1,5 +1,5 @@
 NAME = 'retask'
-VERSION = '0.1'
+VERSION = '0.2'
 DESCRIPTION = 'Task Queue implementation in python'
 LONG_DESCRIPTION = '''Retask is a simple task queue implementation written for human beings. It provides generic solution to create and manage task queues.'''
 AUTHOR = 'Kushal Das'

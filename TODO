@@ -1,3 +1,9 @@
 Manager Class:
     * To view all tasks in a given queue
     * To delete a queue
+
+retask-monitor
+    * command line tool to monitor different queues in the system
+    * Print all queue names
+    * Show details of a queue (number of tasks)
+

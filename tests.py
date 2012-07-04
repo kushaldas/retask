@@ -43,7 +43,7 @@ class SetTest(unittest.TestCase):
 
     def tearDown(self):
         rdb = redis.Redis()
-        rdb.delete('testqueue')
+        rdb.delete('retaskqueue-testqueue')
 
 
 class GetTest(unittest.TestCase):

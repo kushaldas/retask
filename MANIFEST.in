@@ -1,3 +1,5 @@
 include README.rst
 include TODO
 recursive-include docs *
+include examples/*.py
+tests.py

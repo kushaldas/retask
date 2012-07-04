@@ -31,6 +31,7 @@ retask Queue implementation
 import redis
 import json
 from task import Task
+from exceptions import ConnectionError
 
 
 
@@ -59,9 +60,12 @@ class Queue(object):
         Gives the length of the queue. Returns ``None`` if the queue is not
         connected.
         
+        If the queue is not connected then it will raise
+        :class:`retask.ConnectionError`.
+        
         """
         if not self.connected:
-            return None
+            raise ConnectionError('Queue is not connected')
         
         return self.rdb.llen(self.internalname)
     
@@ -104,6 +108,9 @@ class Queue(object):
   
         :return: :class:`~retask.task.Task` object from the queue
         
+        If the queue is not connected then it will raise
+        :class:`retask.ConnectionError`
+        
         .. doctest::
   
            >>> from retask.queue import Queue
@@ -116,7 +123,7 @@ class Queue(object):
 
         """
         if not self.connected:
-            return None
+            raise ConnectionError('Queue is not connected')
         
         if self.rdb.llen(self.internalname) == 0:
             return None
@@ -135,7 +142,10 @@ class Queue(object):
         :arg task: ::class:`~retask.task.Task` object
         
         :return: Tuple with ``Boolean`` value and ``string`` message. 
-  
+        
+        If the queue is not connected then it will raise
+        :class:`retask.ConnectionError`.
+        
         .. doctest::
   
            >>> from retask.queue import Queue
@@ -149,7 +159,7 @@ class Queue(object):
         
         """
         if not self.connected:
-            return False, 'Not connected'
+            raise ConnectionError('Queue is not connected')
         
         if not task.data:
             return False, 'No data'

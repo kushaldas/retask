@@ -29,6 +29,7 @@ User Guide
 
    user/intro
    user/redis
+   user/install
    user/quickstart
 
 

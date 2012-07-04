@@ -40,9 +40,7 @@ API Documentation
 .. toctree::
    :maxdepth: 2
 
-   retask.task
-   retask.queue
-
+   api
 
 Indices and tables
 ------------------

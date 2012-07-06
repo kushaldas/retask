@@ -16,6 +16,7 @@ On Fedora you can start the service as *root*:
 
 ::
 
-    # service redis start
+    # systemctl enable redis.service
+    # systemctl start redis.service
 
 

@@ -45,7 +45,7 @@ class Queue(object):
     """
     def __init__(self, name, config = {}):
         self.name = name
-        self.internalname = 'retaskqueue-' + name 
+        self._name = 'retaskqueue-' + name 
         if not config:
             self.config = {'host':'localhost', 'port':6379, 'db':0,\
                            'password':None}
@@ -67,7 +67,12 @@ class Queue(object):
         if not self.connected:
             raise ConnectionError('Queue is not connected')
         
-        return self.rdb.llen(self.internalname)
+        try:
+            length = self.rdb.llen(self._name)
+        except redis.exceptions.ConnectionError, err:
+            raise ConnectionError(str(err))
+        
+        return length
     
     def connect(self):
         """
@@ -125,10 +130,10 @@ class Queue(object):
         if not self.connected:
             raise ConnectionError('Queue is not connected')
         
-        if self.rdb.llen(self.internalname) == 0:
+        if self.rdb.llen(self._name) == 0:
             return None
         
-        data = self.rdb.rpop(self.internalname)
+        data = self.rdb.rpop(self._name)
         task = Task(data, True)
         return task
     
@@ -165,7 +170,12 @@ class Queue(object):
             return False, 'No data'
         try:
             #We can set the value to the queue
-            self.rdb.lpush(self.internalname, task.rawdata)
+            self.rdb.lpush(self._name, task.rawdata)
         except Exception, err:
             return False, str(err)
         return True, 'Pushed'
+    
+    def __repr__(self):
+            if not self:
+                return '%s()' % (self.__class__.__name__,)
+            return '%s(%r)' % (self.__class__.__name__, self.name)    

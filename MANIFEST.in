@@ -3,3 +3,4 @@ include TODO
 recursive-include docs *
 include examples/*.py
 include tests.py
+include LICENSE

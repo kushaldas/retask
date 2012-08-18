@@ -30,7 +30,7 @@ Retask is actively developed on GitHub, where the code is
 
 You can either clone the public repository::
 
-    git clone git://github.com/retask/retask.git
+    git clone git://github.com/kushaldas/retask.git
 
 Download the `tarball <https://github.com/kushaldas/retask/tarball/master>`_::
 

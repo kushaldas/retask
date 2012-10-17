@@ -16,10 +16,13 @@ This project started from that idea.
 Why Redis
 ---------
 
-I am following `Redis <http://redis.io>`_  development for a time and using
+I am following `Redis <http://redis.io>`_  development for a long time and using
 it in various other projects. The simplicity it provides and rich datastructures
-are always a plus to use it. It is also very fast.
+are always a plus to use it. 
 
+Redis takes care of multithreading issues, it also helps to have data on disk for
+data persistence. It does not have any external dependencies and also very small
+in size, which helps to be used in enterprise world.
 
 Retask License
 --------------

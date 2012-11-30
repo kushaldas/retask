@@ -178,4 +178,21 @@ class Queue(object):
     def __repr__(self):
             if not self:
                 return '%s()' % (self.__class__.__name__,)
-            return '%s(%r)' % (self.__class__.__name__, self.name)    
+            return '%s(%r)' % (self.__class__.__name__, self.name)
+
+    def find(self, obj):
+        """Retruns the index of the given object in the queue, it might be string
+        which will be searched inside each task.
+
+        :arg obj: object we are looking
+
+        :return: -1 if the object is not found or else the location of the task
+        """
+        if not self.connected:
+            raise ConnectionError('Queue is not connected')
+
+        data = self.rdb.lrange(self._name, 0, -1)
+        for i, datum in enumerate(data):
+            if datum.find(str(obj) != -1:
+                return i
+        return -1

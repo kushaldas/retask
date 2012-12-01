@@ -28,7 +28,9 @@ __version__ = '0.2'
 retask Queue implementation
 
 """
+import json
 import redis
+import uuid
 from task import Task
 from exceptions import ConnectionError
 
@@ -132,7 +134,11 @@ class Queue(object):
             return None
 
         data = self.rdb.rpop(self._name)
-        task = Task(data, True)
+        words = data.split(':::', 1)
+        if len(words) == 2:
+            task = Task(words[1], True, words[0])
+        else:
+            task = Task(words[0], True)
         return task
 
     def enqueue(self, task):
@@ -168,12 +174,48 @@ class Queue(object):
             return False, 'No data'
         try:
             #We can set the value to the queue
-            self.rdb.lpush(self._name, task.rawdata)
+            job = Job(self.rdb)
+            text = '%s:::%s' % (job.urn, task.rawdata)
+            self.rdb.lpush(self._name, text)
         except Exception, err:
-            return False, str(err)
-        return True, 'Pushed'
+            return False
+        return job
+
+    def send(self, task, result):
+        """
+        Sends the result back to the producer. This should be called if only you
+        want to return the result in async manner.
+
+        :arg task: ::class:`~retask.task.Task` object
+        :arg result: Result data to be send back. Should be in JSON serializable.
+        """
+        self.rdb.set(task.urn, json.dumps(result))
 
     def __repr__(self):
             if not self:
                 return '%s()' % (self.__class__.__name__,)
             return '%s(%r)' % (self.__class__.__name__, self.name)
+
+
+class Job(object):
+    """
+    Job object containing the async results from the workers.
+    """
+    def __init__(self, rdb):
+        self.rdb = rdb
+        self.urn = uuid.uuid4().urn
+        self.__result = None
+
+    @property
+    def result(self):
+        if self.__result:
+            return self.__result
+        data = self.rdb.get(self.urn)
+        if data:
+            self.rdb.delete(self.urn)
+            data = json.loads(data)
+            self.__result = data
+            return data
+        else:
+            return None
+

@@ -25,9 +25,11 @@ __status__ = 'Development'
 __version__ = '0.2'
 
 """
-Task Class 
+Task Class
 """
 import json
+import uuid
+
 
 class Task(object):
     """
@@ -38,13 +40,14 @@ class Task(object):
     
     """
     
-    def __init__(self, data=None, raw= False):
+    def __init__(self, data=None, raw= False, urn=None):
         if not raw:
             self._data = json.dumps(data)
         else:
             self._data = data
+        self.urn = urn
     
-    @property        
+    @property
     def data(self):
         """
         The python object containing information for the current task
@@ -53,7 +56,7 @@ class Task(object):
         return json.loads(self._data)
     
 
-    @property        
+    @property
     def rawdata(self):
         """
         The string representation of the actual python objects for the task

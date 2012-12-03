@@ -134,11 +134,8 @@ class Queue(object):
             return None
 
         data = self.rdb.rpop(self._name)
-        words = data.split(':::', 1)
-        if len(words) == 2:
-            task = Task(words[1], True, words[0])
-        else:
-            task = Task(words[0], True)
+        task = Task()
+        task.__dict__ = json.loads(data)
         return task
 
     def enqueue(self, task):
@@ -175,7 +172,8 @@ class Queue(object):
         try:
             #We can set the value to the queue
             job = Job(self.rdb)
-            text = '%s:::%s' % (job.urn, task.rawdata)
+            task.urn = job.urn
+            text = json.dumps(task.__dict__)
             self.rdb.lpush(self._name, text)
         except Exception, err:
             return False
@@ -218,4 +216,3 @@ class Job(object):
             return data
         else:
             return None
-

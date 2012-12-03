@@ -187,7 +187,7 @@ class Queue(object):
         :arg task: ::class:`~retask.task.Task` object
         :arg result: Result data to be send back. Should be in JSON serializable.
         """
-        self.rdb.set(task.urn, json.dumps(result))
+        self.rdb.lpush(task.urn, json.dumps(result))
 
     def __repr__(self):
             if not self:
@@ -197,7 +197,7 @@ class Queue(object):
 
 class Job(object):
     """
-    Job object containing the async results from the workers.
+    Job object containing the result from the workers.
     """
     def __init__(self, rdb):
         self.rdb = rdb
@@ -206,9 +206,13 @@ class Job(object):
 
     @property
     def result(self):
+        """
+        Returns the result from the worker for this job. This is used to pass
+        result in async way.
+        """
         if self.__result:
             return self.__result
-        data = self.rdb.get(self.urn)
+        data = self.rdb.rpop(self.urn)
         if data:
             self.rdb.delete(self.urn)
             data = json.loads(data)
@@ -216,3 +220,22 @@ class Job(object):
             return data
         else:
             return None
+
+    def wait(self, wait_time=0):
+        """
+        Blocking call to check if the worker returns the result.
+
+        :arg wait_time: Time in seconds to wait, default is infinite.
+
+        :return: `True` or `False`.
+        """
+        if self.__result:
+            return True
+        data = self.rdb.brpop(self.urn, wait_time)
+        if data:
+            self.rdb.delete(self.urn)
+            data = json.loads(data[1])
+            self.__result = data
+            return True
+        else:
+            return False

@@ -49,5 +49,5 @@ async_consumer.py
 
 
 In the above example we see two newly introduced methods :class:`~retask.queue.Queue`.
-:func:`~retask.queue.wait` is a blocking call to wait for a new task in the queue. This is
-the preferred method over polling using :func:`~retask.queue.dequeue`.
+:func:`~retask.queue.Queue.wait` is a blocking call to wait for a new task in the queue. This is
+the preferred method over polling using :func:`~retask.queue.Queue.dequeue`.

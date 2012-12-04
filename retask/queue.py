@@ -175,9 +175,7 @@ class Queue(object):
     def enqueue(self, task):
         """
         Enqueues the given :class:`~retask.task.Task` object to the queue and returns
-        a tuple. Value in index 0 is ``Boolean`` explaining the enqueue
-        operation is a success or not. Value at index 1 is string with
-        error/success message (if any).
+        a :class:`~retask.queue.Job` object.
 
         :arg task: ::class:`~retask.task.Task` object
 
@@ -194,8 +192,7 @@ class Queue(object):
            True
            >>> from retask.task import Task
            >>> task = Task({'name':'kushal'})
-           >>> q.enqueue(task)
-           (True, 'Pushed')
+           >>> job = q.enqueue(task)
 
         """
         if not self.connected:

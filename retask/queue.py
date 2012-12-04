@@ -106,6 +106,40 @@ class Queue(object):
 
         return True
 
+    def wait(self, wait_time=0):
+        """
+        Returns a :class:`~retask.task.Task` object from the queue. Returns ``False`` if it timeouts.
+
+        :arg wait_time: Time in seconds to wait, default is infinite.
+
+        :return: :class:`~retask.task.Task` object from the queue or False if it timeouts.
+
+        .. doctest::
+
+           >>> from retask.queue import Queue
+           >>> q = Queue('test')
+           >>> q.connect()
+           True
+           >>> task = q.wait()
+           >>> print task.data
+           {u'name': u'kushal'}
+
+        .. note::
+
+            This is a blocking call, you can specity wait_time argument for timeout.
+
+        """
+        if not self.connected:
+            raise ConnectionError('Queue is not connected')
+
+        data = self.rdb.brpop(self._name, wait_time)
+        if data:
+            task = Task()
+            task.__dict__ = json.loads(data[1])
+            return task
+        else:
+            return False
+
     def dequeue(self):
         """
         Returns a :class:`~retask.task.Task` object from the queue. Returns ``None`` if the
@@ -179,15 +213,17 @@ class Queue(object):
             return False
         return job
 
-    def send(self, task, result):
+    def send(self, task, result, expire=60):
         """
         Sends the result back to the producer. This should be called if only you
         want to return the result in async manner.
 
         :arg task: ::class:`~retask.task.Task` object
         :arg result: Result data to be send back. Should be in JSON serializable.
+        :arg expire: Time in seconds after the key expires. Default is 60 seconds.
         """
         self.rdb.lpush(task.urn, json.dumps(result))
+        self.rdb.expire(task.urn, expire)
 
     def __repr__(self):
             if not self:
@@ -223,11 +259,17 @@ class Job(object):
 
     def wait(self, wait_time=0):
         """
-        Blocking call to check if the worker returns the result.
+        Blocking call to check if the worker returns the result. One can use
+        job.result after this call returns ``True``.
 
         :arg wait_time: Time in seconds to wait, default is infinite.
 
         :return: `True` or `False`.
+
+        .. note::
+
+            This is a blocking call, you can specity wait_time argument for timeout.
+
         """
         if self.__result:
             return True

@@ -31,6 +31,7 @@ User Guide
    user/redis
    user/install
    user/quickstart
+   user/tutorials
 
 
 

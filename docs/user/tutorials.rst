@@ -53,3 +53,21 @@ In the above example we see two newly introduced methods :class:`~retask.queue.Q
 the preferred method over polling using :func:`~retask.queue.Queue.dequeue`.
 To send the result back workers will use :func:`~retask.queue.Queue.send` method, which takes an optional argument
 `wait_time` to specify timeout value in seconds.
+
+Synchronous / blocking wait for the result
++++++++++++++++++++++++++++++++++++++++++++
+
+:: 
+
+    from retask.task import Task
+    from retask.queue import Queue
+    queue = Queue('example')
+    info1 = {'user': 'Fedora planet', 'url': 'http://planet.fedoraproject.org'}
+    task1 = Task(info1)
+    queue.connect()
+    job = queue.enqueue(task1)
+    job.wait()
+    print job.result
+
+In this example we are using :func:`~retask.queue.Job.wait` function to do a blocking
+synchronous call to the worker.

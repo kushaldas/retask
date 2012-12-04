@@ -28,11 +28,11 @@ __version__ = '0.2'
 retask Queue implementation
 
 """
-import redis
 import json
+import redis
+import uuid
 from task import Task
 from exceptions import ConnectionError
-
 
 
 class Queue(object):
@@ -41,118 +41,153 @@ class Queue(object):
     passes optional config dictionary with details for Redis
     server, it will connect to that instance. By default it connects
     to the localhost.
-    
+
     """
-    def __init__(self, name, config = {}):
+    def __init__(self, name, config={}):
         self.name = name
-        self._name = 'retaskqueue-' + name 
+        self._name = 'retaskqueue-' + name
         if not config:
-            self.config = {'host':'localhost', 'port':6379, 'db':0,\
-                           'password':None}
+            self.config = {'host': 'localhost', 'port': 6379, 'db': 0,\
+                           'password': None}
         else:
             self.config = config
         self.rdb = None
         self.connected = False
-        
-    @property   
+
+    @property
     def length(self):
         """
         Gives the length of the queue. Returns ``None`` if the queue is not
         connected.
-        
+
         If the queue is not connected then it will raise
         :class:`retask.ConnectionError`.
-        
+
         """
         if not self.connected:
             raise ConnectionError('Queue is not connected')
-        
+
         try:
             length = self.rdb.llen(self._name)
         except redis.exceptions.ConnectionError, err:
             raise ConnectionError(str(err))
-        
+
         return length
-    
+
     def connect(self):
         """
         Creates the connection with the redis server.
         Return ``True`` if the connection works, else returns
         ``False``. It does not take any arguments.
-    
+
         :return: ``Boolean`` value
-          
+
         .. note::
-  
+
            After creating the ``Queue`` object the user should call
            the ``connect`` method so create the connection.
-  
+
         .. doctest::
-  
+
            >>> from retask.queue import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True
-        
+
         """
         config = self.config
-        self.rdb = redis.Redis(config['host'], config['port'], config['db'], 
+        self.rdb = redis.Redis(config['host'], config['port'], config['db'],\
                               config['password'])
         try:
             info = self.rdb.info()
             self.connected = True
         except redis.ConnectionError:
             return False
-        
+
         return True
-          
+
+    def wait(self, wait_time=0):
+        """
+        Returns a :class:`~retask.task.Task` object from the queue. Returns ``False`` if it timeouts.
+
+        :arg wait_time: Time in seconds to wait, default is infinite.
+
+        :return: :class:`~retask.task.Task` object from the queue or False if it timeouts.
+
+        .. doctest::
+
+           >>> from retask.queue import Queue
+           >>> q = Queue('test')
+           >>> q.connect()
+           True
+           >>> task = q.wait()
+           >>> print task.data
+           {u'name': u'kushal'}
+
+        .. note::
+
+            This is a blocking call, you can specity wait_time argument for timeout.
+
+        """
+        if not self.connected:
+            raise ConnectionError('Queue is not connected')
+
+        data = self.rdb.brpop(self._name, wait_time)
+        if data:
+            task = Task()
+            task.__dict__ = json.loads(data[1])
+            return task
+        else:
+            return False
+
     def dequeue(self):
         """
         Returns a :class:`~retask.task.Task` object from the queue. Returns ``None`` if the
         queue is empty.
-  
+
         :return: :class:`~retask.task.Task` object from the queue
-        
+
         If the queue is not connected then it will raise
         :class:`retask.ConnectionError`
-        
+
         .. doctest::
-  
+
            >>> from retask.queue import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True
            >>> t = q.dequeue()
            >>> print t.data
-           {u'name': u'kushal'}        
+           {u'name': u'kushal'}
 
         """
         if not self.connected:
             raise ConnectionError('Queue is not connected')
-        
+
         if self.rdb.llen(self._name) == 0:
             return None
-        
+
         data = self.rdb.rpop(self._name)
-        task = Task(data, True)
+        task = Task()
+        task.__dict__ = json.loads(data)
         return task
-    
+
     def enqueue(self, task):
         """
         Enqueues the given :class:`~retask.task.Task` object to the queue and returns
         a tuple. Value in index 0 is ``Boolean`` explaining the enqueue
-        operation is a success or not. Value at index 1 is string with 
+        operation is a success or not. Value at index 1 is string with
         error/success message (if any).
-        
+
         :arg task: ::class:`~retask.task.Task` object
-        
-        :return: Tuple with ``Boolean`` value and ``string`` message. 
-        
+
+        :return: Tuple with ``Boolean`` value and ``string`` message.
+
         If the queue is not connected then it will raise
         :class:`retask.ConnectionError`.
-        
+
         .. doctest::
-  
+
            >>> from retask.queue import Queue
            >>> q = Queue('test')
            >>> q.connect()
@@ -161,20 +196,35 @@ class Queue(object):
            >>> task = Task({'name':'kushal'})
            >>> q.enqueue(task)
            (True, 'Pushed')
-        
+
         """
         if not self.connected:
             raise ConnectionError('Queue is not connected')
-        
+
         if not task.data:
             return False, 'No data'
         try:
             #We can set the value to the queue
-            self.rdb.lpush(self._name, task.rawdata)
+            job = Job(self.rdb)
+            task.urn = job.urn
+            text = json.dumps(task.__dict__)
+            self.rdb.lpush(self._name, text)
         except Exception, err:
-            return False, str(err)
-        return True, 'Pushed'
-    
+            return False
+        return job
+
+    def send(self, task, result, expire=60):
+        """
+        Sends the result back to the producer. This should be called if only you
+        want to return the result in async manner.
+
+        :arg task: ::class:`~retask.task.Task` object
+        :arg result: Result data to be send back. Should be in JSON serializable.
+        :arg expire: Time in seconds after the key expires. Default is 60 seconds.
+        """
+        self.rdb.lpush(task.urn, json.dumps(result))
+        self.rdb.expire(task.urn, expire)
+
     def __repr__(self):
             if not self:
                 return '%s()' % (self.__class__.__name__,)
@@ -193,6 +243,58 @@ class Queue(object):
 
         data = self.rdb.lrange(self._name, 0, -1)
         for i, datum in enumerate(data):
-            if datum.find(str(obj) != -1:
+            if datum.find(str(obj)) != -1:
                 return i
         return -1
+
+
+class Job(object):
+    """
+    Job object containing the result from the workers.
+    """
+    def __init__(self, rdb):
+        self.rdb = rdb
+        self.urn = uuid.uuid4().urn
+        self.__result = None
+
+    @property
+    def result(self):
+        """
+        Returns the result from the worker for this job. This is used to pass
+        result in async way.
+        """
+        if self.__result:
+            return self.__result
+        data = self.rdb.rpop(self.urn)
+        if data:
+            self.rdb.delete(self.urn)
+            data = json.loads(data)
+            self.__result = data
+            return data
+        else:
+            return None
+
+    def wait(self, wait_time=0):
+        """
+        Blocking call to check if the worker returns the result. One can use
+        job.result after this call returns ``True``.
+
+        :arg wait_time: Time in seconds to wait, default is infinite.
+
+        :return: `True` or `False`.
+
+        .. note::
+
+            This is a blocking call, you can specity wait_time argument for timeout.
+
+        """
+        if self.__result:
+            return True
+        data = self.rdb.brpop(self.urn, wait_time)
+        if data:
+            self.rdb.delete(self.urn)
+            data = json.loads(data[1])
+            self.__result = data
+            return True
+        else:
+            return False

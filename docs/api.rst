@@ -7,8 +7,8 @@ API
 
 This part contains the API documentation of the module.
 
-Classes
--------
+Submodules
+-----------
 .. toctree::
     :maxdepth: 2
 

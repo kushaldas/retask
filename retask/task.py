@@ -25,46 +25,46 @@ __status__ = 'Development'
 __version__ = '0.2'
 
 """
-Task Class 
+Task Class
 """
 import json
+
 
 class Task(object):
     """
     Returns a new Task object, the information for the task is passed through
     argument ``data``
-    
+
     :kwarg data: Python object which contains information for the task. Should be serialzable through ``JSON``.
-    
+
     """
-    
-    def __init__(self, data=None, raw= False):
+
+    def __init__(self, data=None, raw=False, urn=None):
         if not raw:
             self._data = json.dumps(data)
         else:
             self._data = data
-    
-    @property        
+        self.urn = urn
+
+    @property
     def data(self):
         """
         The python object containing information for the current task
-        
+
         """
         return json.loads(self._data)
-    
 
-    @property        
+    @property
     def rawdata(self):
         """
         The string representation of the actual python objects for the task
-     
-        .. note:: 
+
+        .. note::
             This should not be used directly by the users. This is for internal use
-            only.        
+            only.
 
         """
         return self._data
-    
-    
+
     def __repr__(self):
             return '%s(%s)' % (self.__class__.__name__, repr(self.data))

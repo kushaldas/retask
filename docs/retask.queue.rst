@@ -6,3 +6,5 @@ can be used to create and manage queues.
 .. autoclass:: retask.queue.Queue
    :members:
 
+.. autoclass:: retask.queue.Job
+   :members:

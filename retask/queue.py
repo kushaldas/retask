@@ -179,7 +179,7 @@ class Queue(object):
 
         :arg task: ::class:`~retask.task.Task` object
 
-        :return: Tuple with ``Boolean`` value and ``string`` message.
+        :return: :class:`~retask.queue.Job` object
 
         If the queue is not connected then it will raise
         :class:`retask.ConnectionError`.
@@ -198,8 +198,6 @@ class Queue(object):
         if not self.connected:
             raise ConnectionError('Queue is not connected')
 
-        if not task.data:
-            return False, 'No data'
         try:
             #We can set the value to the queue
             job = Job(self.rdb)
@@ -248,6 +246,8 @@ class Queue(object):
 class Job(object):
     """
     Job object containing the result from the workers.
+
+    :arg rdb: The underlying redis connection.
     """
     def __init__(self, rdb):
         self.rdb = rdb

@@ -55,7 +55,7 @@ To send the result back workers will use :func:`~retask.queue.Queue.send` method
 `wait_time` to specify timeout value in seconds.
 
 Synchronous / blocking wait for the result
-+++++++++++++++++++++++++++++++++++++++++++
+-------------------------------------------
 
 :: 
 

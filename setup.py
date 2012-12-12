@@ -26,5 +26,12 @@ setup(name='retask',
           ],
       packages=find_packages(),
       data_files=[],
+      install_requires=[
+          'redis'
+      ],
+      test_suite='tests',
+      tests_require=[
+          'mock'
+      ]
 )
 

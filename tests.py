@@ -39,7 +39,7 @@ class SetTest(unittest.TestCase):
         queue = Queue('testqueue')
         queue.connect()
         t = Task({'name':'kushal'})
-        self.assertTrue(queue.enqueue(t)[0])
+        self.assertTrue(queue.enqueue(t))
 
     def tearDown(self):
         rdb = redis.Redis()

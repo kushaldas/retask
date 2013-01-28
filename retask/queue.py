@@ -44,14 +44,16 @@ class Queue(object):
 
     """
     def __init__(self, name, config=None):
-        config = config or {}
+        specified_config = config or {}
         self.name = name
         self._name = 'retaskqueue-' + name
-        if not config:
-            self.config = {'host': 'localhost', 'port': 6379, 'db': 0,\
-                           'password': None}
-        else:
-            self.config = config
+        self.config = {
+            'host': 'localhost',
+            'port': 6379,
+            'db': 0,
+            'password': None,
+        }
+        self.config.update(specified_config)
         self.rdb = None
         self.connected = False
 

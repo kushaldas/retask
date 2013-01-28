@@ -43,7 +43,8 @@ class Queue(object):
     to the localhost.
 
     """
-    def __init__(self, name, config={}):
+    def __init__(self, name, config=None):
+        config = config or {}
         self.name = name
         self._name = 'retaskqueue-' + name
         if not config:

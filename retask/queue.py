@@ -226,7 +226,7 @@ class Queue(object):
             return '%s(%r)' % (self.__class__.__name__, self.name)
 
     def find(self, obj):
-        """Retruns the index of the given object in the queue, it might be string
+        """Returns the index of the given object in the queue, it might be string
         which will be searched inside each task.
 
         :arg obj: object we are looking

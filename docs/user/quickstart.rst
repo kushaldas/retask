@@ -39,5 +39,6 @@ just print the data.
     queue.connect()
     while queue.length != 0:
         task = queue.dequeue()
-        print task.data
+        if task:
+            print task.data
 

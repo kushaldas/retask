@@ -171,6 +171,8 @@ class Queue(object):
             return None
 
         data = self.rdb.rpop(self._name)
+        if not data:
+            return None
         task = Task()
         task.__dict__ = json.loads(data)
         return task

@@ -93,7 +93,7 @@ class Queue(object):
 
         .. doctest::
 
-           >>> from retask.queue import Queue
+           >>> from retask import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True
@@ -120,7 +120,7 @@ class Queue(object):
 
         .. doctest::
 
-           >>> from retask.queue import Queue
+           >>> from retask import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True
@@ -156,7 +156,7 @@ class Queue(object):
 
         .. doctest::
 
-           >>> from retask.queue import Queue
+           >>> from retask import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True
@@ -194,7 +194,7 @@ class Queue(object):
 
         .. doctest::
 
-           >>> from retask.queue import Queue
+           >>> from retask import Queue
            >>> q = Queue('test')
            >>> q.connect()
            True

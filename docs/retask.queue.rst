@@ -3,8 +3,8 @@
 This module contains the primary :class:`Queue` which 
 can be used to create and manage queues.
 
-.. autoclass:: retask.queue.Queue
+.. autoclass:: retask.Queue
    :members:
 
-.. autoclass:: retask.queue.Job
+.. autoclass:: retask.Job
    :members:

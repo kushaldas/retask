@@ -15,8 +15,8 @@ async_producer.py
 
 ::
 
-    from retask.task import Task
-    from retask.queue import Queue
+    from retask import Task
+    from retask import Queue
     import time
     queue = Queue('example')
     info1 = {'user': 'Fedora planet', 'url': 'http://planet.fedoraproject.org'}
@@ -37,8 +37,8 @@ async_consumer.py
 
 ::
 
-    from retask.task import Task
-    from retask.queue import Queue
+    from retask import Task
+    from retask import Queue
     import time
     queue = Queue('example')
     queue.connect()
@@ -59,8 +59,8 @@ Synchronous / blocking wait for the result
 
 :: 
 
-    from retask.task import Task
-    from retask.queue import Queue
+    from retask import Task
+    from retask import Queue
     queue = Queue('example')
     info1 = {'user': 'Fedora planet', 'url': 'http://planet.fedoraproject.org'}
     task1 = Task(info1)

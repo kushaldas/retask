@@ -22,7 +22,8 @@ setup(name='retask',
           'License :: OSI Approved :: MIT License',
           'Topic :: System :: Distributed Computing',
           'Programming Language :: Python :: 2.6',
-          'Programming Language :: Python :: 2.7'
+          'Programming Language :: Python :: 2.7',
+          'Programming Language :: Python :: 3.2'
           ],
       packages=find_packages(),
       data_files=[],

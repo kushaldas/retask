@@ -63,7 +63,7 @@ class GetTest(unittest.TestCase):
         queue.connect()
         task = queue.dequeue()
         i = task.data
-        self.assertEqual(task.data['name'], u'kushal')
+        self.assertEqual(task.data['name'], 'kushal')
         
 
 if __name__ == '__main__':

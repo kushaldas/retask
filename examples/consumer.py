@@ -1,4 +1,3 @@
-from retask.task import Task
 from retask.queue import Queue
 queue = Queue('example')
 queue.connect()

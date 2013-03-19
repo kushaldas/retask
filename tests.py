@@ -3,7 +3,6 @@ import redis
 from mock import patch
 from retask.task import Task
 from retask.queue import Queue
-from pprint import pprint
 
 
 class ConnectTest(unittest.TestCase):
@@ -19,7 +18,7 @@ class ConnectTest(unittest.TestCase):
 class LengthTest(unittest.TestCase):
     """
     Tests the length method of the Queue
-    
+
     """
     @patch('redis.Redis')
     def runTest(self, mock_redis):
@@ -33,7 +32,7 @@ class LengthTest(unittest.TestCase):
 class SetTest(unittest.TestCase):
     """
     Sets a task in the Queue
-    
+
     """
     def runTest(self):
         queue = Queue('testqueue')
@@ -49,24 +48,24 @@ class SetTest(unittest.TestCase):
 class GetTest(unittest.TestCase):
     """
     Gets a task in the Queue
-    
+
     """
     def setUp(self):
         queue = Queue('testqueue')
         queue.connect()
         t = Task({'name':'kushal'})
         queue.enqueue(t)
-        
-        
+
+
     def runTest(self):
         queue = Queue('testqueue')
         queue.connect()
         task = queue.dequeue()
         i = task.data
         self.assertEqual(task.data['name'], 'kushal')
-        
+
 
 if __name__ == '__main__':
     unittest.main()
-        
-        
+
+

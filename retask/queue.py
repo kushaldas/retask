@@ -89,7 +89,7 @@ class Queue(object):
         .. note::
 
            After creating the ``Queue`` object the user should call
-           the ``connect`` method so create the connection.
+           the ``connect`` method to create the connection.
 
         .. doctest::
 
@@ -303,3 +303,4 @@ class Job(object):
             return True
         else:
             return False
+

@@ -1,5 +1,5 @@
-from retask.task import Task
-from retask.queue import Queue
+from retask import Task
+from retask import Queue
 queue = Queue('example')
 info1 = {'user':'kushal', 'url':'http://kushaldas.in'}
 info2 = {'user':'fedora planet', 'url':'http://planet.fedoraproject.org'}

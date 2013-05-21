@@ -1,8 +1,8 @@
 import unittest
 import redis
 from mock import patch
-from retask.task import Task
-from retask.queue import Queue
+from retask import Task
+from retask import Queue
 
 
 class ConnectTest(unittest.TestCase):

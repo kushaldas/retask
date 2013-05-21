@@ -1,4 +1,4 @@
-from retask.queue import Queue
+from retask import Queue
 queue = Queue('example')
 queue.connect()
 while queue.length != 0:

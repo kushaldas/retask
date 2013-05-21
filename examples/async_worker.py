@@ -1,4 +1,4 @@
-from retask.queue import Queue
+from retask import Queue
 import time
 queue = Queue('example')
 queue.connect()

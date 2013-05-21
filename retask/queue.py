@@ -18,8 +18,8 @@
 #OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 #SOFTWARE.
 
-__author__ = 'Kushal Das <kushaldas@gmail.com'
-__copyright__ = 'Copyright (c) 2012 Kushal Das'
+__author__ = 'Kushal Das <kushaldas@gmail.com>'
+__copyright__ = 'Copyright (c) 2012-2013 Kushal Das'
 __license__ = 'MIT'
 __status__ = 'Development'
 __version__ = '0.3'

@@ -18,7 +18,7 @@ synchronously (wait until worker returns the result to the job).
 Dependencies
 ------------
 - python-redis
-- mock
+- mock (for tests)
 - A running Redis server
 
 

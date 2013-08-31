@@ -21,6 +21,12 @@ Dependencies
 - mock (for tests)
 - A running Redis server
 
+Testimonial(s)
+--------------
+
+**Ralph Bean**
+   python-retask made job distribution easy at a time when I didn't want to have 
+   to think about job distribution.  Life saver.
 
 
 User Guide

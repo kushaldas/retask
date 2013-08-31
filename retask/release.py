@@ -1,10 +1,10 @@
 NAME = 'retask'
-VERSION = '0.3'
+VERSION = '0.4'
 DESCRIPTION = 'Task Queue implementation in python'
 LONG_DESCRIPTION = '''Retask is a simple task queue implementation written for human beings. It provides generic solution to create and manage task queues.'''
 AUTHOR = 'Kushal Das'
 EMAIL = 'kushaldas@gmail.com'
-COPYRIGHT = '2012 Kushal Das'
+COPYRIGHT = '2012-13 Kushal Das'
 URL = 'https://github.com/kushaldas/retask'
 LICENSE = 'MIT'
 

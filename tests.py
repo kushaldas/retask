@@ -64,6 +64,26 @@ class GetTest(unittest.TestCase):
         i = task.data
         self.assertEqual(task.data['name'], 'kushal')
 
+class GetQueueNamesTest(unittest.TestCase):
+    """
+    Gets a task in the Queue
+
+    """
+    def setUp(self):
+        queue = Queue('lambda')
+        queue.connect()
+        t = Task({'name':'kushal'})
+        queue.enqueue(t)
+
+    def runTest(self):
+        queue = Queue('lambda')
+        queue.connect()
+        results = queue.names()
+        self.assertEqual(results[0], 'retaskqueue-lambda')
+
+    def tearDown(self):
+        rdb = redis.Redis()
+        rdb.delete('retaskqueue-lambda')
 
 if __name__ == '__main__':
     unittest.main()

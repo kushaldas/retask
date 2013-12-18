@@ -58,6 +58,18 @@ class Queue(object):
         self.rdb = None
         self.connected = False
 
+    def names(self):
+        data = ""
+        if not self.connected:
+            raise ConnectionError('Queue is not connected')
+
+        try:
+            data = self.rdb.keys("retaskqueue-*")
+        except redis.exceptions.ConnectionError as err:
+            raise ConnectionError(str(err))
+
+        return data
+
     @property
     def length(self):
         """

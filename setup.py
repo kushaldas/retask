@@ -3,21 +3,23 @@
 
 
 from setuptools import find_packages, setup
-import retask.release as rl
 
 setup(name='retask',
-      version=rl.VERSION,
-      description=rl.DESCRIPTION,
-      long_description=rl.LONG_DESCRIPTION,
-      author=rl.AUTHOR,
-      author_email=rl.EMAIL,
+      version='0.4',
+      description='Task Queue implementation in python',
+      long_description=(
+          'Retask is a simple task queue implementation written for '
+          'human beings. It provides generic solution to create and manage '
+          'task queues.'
+      ),
+      author='Kushal Das',
+      author_email='kushaldas@gmail.com',
       maintainer='Kushal Das',
       maintainer_email='kushaldas@gmail.com',
-      license=rl.LICENSE,
-      url=rl.URL,
+      license='MIT',
+      url='https://github.com/kushaldas/retask',
       classifiers=[
           'Development Status :: 4 - Beta',
-          
           'Topic :: Software Development :: Libraries',
           'License :: OSI Approved :: MIT License',
           'Topic :: System :: Distributed Computing',
@@ -34,6 +36,4 @@ setup(name='retask',
       test_suite='tests',
       tests_require=[
           'mock'
-      ]
-)
-
+      ])

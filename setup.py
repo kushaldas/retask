@@ -5,7 +5,7 @@
 from setuptools import find_packages, setup
 
 setup(name='retask',
-      version='0.4',
+      version='1.0',
       description='Task Queue implementation in python',
       long_description=(
           'Retask is a simple task queue implementation written for '
@@ -19,13 +19,16 @@ setup(name='retask',
       license='MIT',
       url='https://github.com/kushaldas/retask',
       classifiers=[
-          'Development Status :: 4 - Beta',
+          'Development Status :: 5 - Production/Stable',
           'Topic :: Software Development :: Libraries',
           'License :: OSI Approved :: MIT License',
           'Topic :: System :: Distributed Computing',
           'Programming Language :: Python :: 2.6',
           'Programming Language :: Python :: 2.7',
-          'Programming Language :: Python :: 3.2'
+          'Programming Language :: Python :: 3.2',
+          'Programming Language :: Python :: 3.3',
+          'Programming Language :: Python :: 3.4',
+          'Programming Language :: Python :: 3.5',
           ],
       packages=find_packages(),
       data_files=[],

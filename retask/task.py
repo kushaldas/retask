@@ -19,10 +19,10 @@
 #SOFTWARE.
 
 __author__ = 'Kushal Das <kushaldas@gmail.com>'
-__copyright__ = 'Copyright (c) 2012-2013 Kushal Das'
+__copyright__ = 'Copyright (c) 2012-2015 Kushal Das'
 __license__ = 'MIT'
-__status__ = 'Development'
-__version__ = '0.3'
+__status__ = 'Production/Stable'
+__version__ = '1.0'
 
 """
 Task Class

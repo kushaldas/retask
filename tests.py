@@ -87,7 +87,7 @@ class GetQueueNamesTest(unittest.TestCase):
         rdb.delete('retaskqueue-lambda')
 
 
-class PQSetTest(unittest.TestCase):
+class PQEnqueueTest(unittest.TestCase):
     """
     Sets a task in the Queue
 
@@ -104,9 +104,9 @@ class PQSetTest(unittest.TestCase):
         self.queue.rdb.delete(self.queue._name)
 
 
-class PQGetTest(unittest.TestCase):
+class PQDequeueTest(unittest.TestCase):
     """
-    Sets a task in the Queue
+    Gets tasks from the Queue
 
     """
     def setUp(self):
@@ -126,6 +126,28 @@ class PQGetTest(unittest.TestCase):
     def tearDown(self):
         self.queue.rdb.delete(self.queue._name)
 
+
+class PQReverseDequeueTest(unittest.TestCase):
+    """
+    Gets tasks from the Queue in reverse order
+
+    """
+    def setUp(self):
+        self.queue = PriorityQueue('get_test_queue', reverse_order=True)
+        self.queue.connect()
+
+        self.queue.enqueue(Task({'index': 2}), 50)
+        self.queue.enqueue(Task({'index': 0}), 25)
+        self.queue.enqueue(Task({'index': 1}), 40)        
+        self.queue.enqueue(Task({'index': 3}), 100)
+
+    def runTest(self):
+        for i in xrange(4):
+            t = self.queue.dequeue()
+            self.assertEqual(t.data['index'], i)
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
 
 
 if __name__ == '__main__':

@@ -112,8 +112,8 @@ class Queue(object):
 
         """
         config = self.config
-        self.rdb = redis.Redis(config['host'], config['port'], config['db'],\
-                              config['password'])
+        self.rdb = redis.StrictRedis(config['host'], config['port'],
+                                     config['db'], config['password'])
         try:
             info = self.rdb.info()
             self.connected = True

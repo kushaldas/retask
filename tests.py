@@ -171,11 +171,11 @@ class PQWaitTimeoutTest(unittest.TestCase):
         t = self.queue.wait(wait_time=5)
         self.assertEqual(t.data['text'], 'timeout ...')
 
-    def tearDown(self):
-        self.queue.rdb.delete(self.queue._name)
-
     def addTask(self):
         self.queue.enqueue(Task({'text': 'timeout ...'}), 10)
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
 
 
 class PQWaitTest(unittest.TestCase):
@@ -193,11 +193,11 @@ class PQWaitTest(unittest.TestCase):
         t = self.queue.wait()
         self.assertEqual(t.data['text'], 'waiting ...')
 
-    def tearDown(self):
-        self.queue.rdb.delete(self.queue._name)
-
     def addTask(self):
         self.queue.enqueue(Task({'text': 'waiting ...'}), 10)
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
 
 
 class PQWaitTestMultipleConsumers(unittest.TestCase):

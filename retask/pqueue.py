@@ -111,9 +111,8 @@ class PriorityQueue(queue.Queue):
         if not self.connected:
             raise exceptions.ConnectionError('PriorityQueue is not connected')
 
-        ps = self.rdb.pubsub()
+        ps = self.rdb.pubsub(ignore_subscribe_messages=True)
         ps.subscribe(self._wc_name)
-        ps.get_message()  # ignore subscribe message
 
         data = self._try_pop()
         timed_out = False
@@ -128,9 +127,9 @@ class PriorityQueue(queue.Queue):
                 timed_out = (wait_time <= 0)
 
             if not timed_out:
-                if msg['data'] == _PRIORITY_QUEUE_READY_MSG:
+                if _is_priority_queue_ready_msg(msg):
                     data = self._try_pop()
-                else:  # raise?
+                elif msg is not None:  # raise?
                     _log.error("PriorityQueue.wait: Unexpected message\n%s",
                                str(msg))
 
@@ -236,3 +235,12 @@ class PriorityQueue(queue.Queue):
         self.rdb.transaction(transaction, self._name,
                              value_from_callable=True)
         return transaction.result
+
+
+# ----------------#
+# Utility methods #
+
+
+def _is_priority_queue_ready_msg(message):
+    return message is not None and message['type'] == 'message' \
+        and message['data'] == _PRIORITY_QUEUE_READY_MSG

@@ -33,7 +33,6 @@ import json
 import logging
 import redis
 import six
-import threading
 import time
 
 import exceptions

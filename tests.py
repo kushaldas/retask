@@ -1,4 +1,9 @@
+# -*- coding: utf-8 -*-
+
+
+import threading
 import unittest
+
 import redis
 from mock import patch
 from retask import Task
@@ -131,7 +136,7 @@ class PQReverseDequeueTest(unittest.TestCase):
 
     """
     def setUp(self):
-        self.queue = PriorityQueue('get_test_queue', reverse_order=True)
+        self.queue = PriorityQueue('get_reverse_test_queue', reverse_order=True)
         self.queue.connect()
 
         self.queue.enqueue(Task({'index': 2}), 50)
@@ -146,6 +151,54 @@ class PQReverseDequeueTest(unittest.TestCase):
 
     def tearDown(self):
         self.queue.rdb.delete(self.queue._name)
+
+
+class PQWaitTimeoutTest(unittest.TestCase):
+    """
+    Tries to wait for a task until the operation runs out of time.
+
+    """
+    def setUp(self):
+        self.queue = PriorityQueue('wait_timeout_test_queue')
+        self.queue.connect()
+
+    def runTest(self):
+        t = self.queue.wait(wait_time=1)
+        self.assertFalse(t)
+
+        timer = threading.Timer(1, self.addTask)
+        timer.start()
+        t = self.queue.wait(wait_time=5)
+        self.assertEqual(t.data['text'], 'timeout ...')
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
+
+    def addTask(self):
+        self.queue.enqueue(Task({'text': 'timeout ...'}), 10)
+
+
+class PQWaitTest(unittest.TestCase):
+    """
+    Waits for a task until one is available.
+    """
+    def setUp(self):
+        self.queue = PriorityQueue('wait_no_timeout_test_queue')
+        self.queue.connect()
+
+    def runTest(self):
+        timer = threading.Timer(3, self.addTask)
+        timer.start()
+
+        t = self.queue.wait()
+        self.assertEqual(t.data['text'], 'waiting ...')
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
+
+    def addTask(self):
+        self.queue.enqueue(Task({'text': 'waiting ...'}), 10)
+
 
 
 if __name__ == '__main__':

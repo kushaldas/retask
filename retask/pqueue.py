@@ -30,9 +30,11 @@ retask PriorityQueue implementation
 """
 
 import json
+import logging
 import redis
 import six
-import logging
+import threading
+import time
 
 import exceptions
 import queue
@@ -81,7 +83,7 @@ class PriorityQueue(queue.Queue):
         except redis.exceptions.ConnectionError as e:
             raise exceptions.ConnectionError(str(e))
 
-    def wait(self, wait_time=0):
+    def wait(self, wait_time=None):
         """
         Returns a :class:`~rtask.task.Task` object from the queue.
         Returns ``False`` if it timeouts.
@@ -107,28 +109,40 @@ class PriorityQueue(queue.Queue):
             for timeout.
 
         """
-        # TODO add timeout support
         if not self.connected:
             raise exceptions.ConnectionError('PriorityQueue is not connected')
 
-        ps = self._rdb.pubsub(ignore_subscribe_messages=True)
+        ps = self.rdb.pubsub()
         ps.subscribe(self._wc_name)
-        ps_listener = ps.listen()
+        ps.get_message()  # ignore subscribe message
 
-        try:
-            data = self._try_pop()
-            while data is None:
-                msg = next(ps_listener)
-                if msg["data"] == _PRIORITY_QUEUE_READY_MSG:
+        data = self._try_pop()
+        timed_out = False
+
+        while data is None and not timed_out:
+            start_time = time.time()
+            msg = ps.get_message(timeout=wait_time)
+            elapsed = time.time() - start_time
+
+            if wait_time is not None:
+                wait_time -= elapsed
+                timed_out = (wait_time <= 0)
+
+            if not timed_out:
+                if msg['data'] == _PRIORITY_QUEUE_READY_MSG:
                     data = self._try_pop()
-                else:
-                    _log.error("[PriorityQueue.wait] Unexpected message")
-        finally:
-            ps.unsubscribe(self._wc_name)
-            ps.close()
+                else:  # raise?
+                    _log.error("PriorityQueue.wait: Unexpected message")
 
-        t = task.Task()
-        t.__dict__ = json.loads(data)
+        ps.unsubscribe(self._wc_name)
+        ps.close()
+
+        if data:
+            t = task.Task()
+            t.__dict__ = json.loads(data)
+            return t
+
+        return False
 
     def dequeue(self):
         """

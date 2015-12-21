@@ -15,13 +15,12 @@ class ConnectTest(unittest.TestCase):
         self.assertTrue(queue.connect())
 
 
-
 class LengthTest(unittest.TestCase):
     """
     Tests the length method of the Queue
 
     """
-    @patch('redis.Redis')
+    @patch('redis.StrictRedis')
     def runTest(self, mock_redis):
         m = mock_redis.return_value
         m.llen.return_value = 2
@@ -38,7 +37,7 @@ class SetTest(unittest.TestCase):
     def runTest(self):
         queue = Queue('testqueue')
         queue.connect()
-        t = Task({'name':'kushal'})
+        t = Task({'name': 'kushal'})
         self.assertTrue(queue.enqueue(t))
 
     def tearDown(self):
@@ -54,16 +53,15 @@ class GetTest(unittest.TestCase):
     def setUp(self):
         queue = Queue('testqueue')
         queue.connect()
-        t = Task({'name':'kushal'})
+        t = Task({'name': 'kushal'})
         queue.enqueue(t)
-
 
     def runTest(self):
         queue = Queue('testqueue')
         queue.connect()
         task = queue.dequeue()
-        i = task.data
         self.assertEqual(task.data['name'], 'kushal')
+
 
 class GetQueueNamesTest(unittest.TestCase):
     """
@@ -73,7 +71,7 @@ class GetQueueNamesTest(unittest.TestCase):
     def setUp(self):
         queue = Queue('lambda')
         queue.connect()
-        t = Task({'name':'kushal'})
+        t = Task({'name': 'kushal'})
         queue.enqueue(t)
 
     def runTest(self):
@@ -97,7 +95,7 @@ class PQEnqueueTest(unittest.TestCase):
         self.queue.connect()
 
     def runTest(self):
-        t = Task({'name':'josep'})
+        t = Task({'name': 'josep'})
         self.assertTrue(self.queue.enqueue(t, 100))
 
     def tearDown(self):
@@ -115,7 +113,7 @@ class PQDequeueTest(unittest.TestCase):
 
         self.queue.enqueue(Task({'index': 1}), 50)
         self.queue.enqueue(Task({'index': 3}), 25)
-        self.queue.enqueue(Task({'index': 2}), 40)        
+        self.queue.enqueue(Task({'index': 2}), 40)
         self.queue.enqueue(Task({'index': 0}), 100)
 
     def runTest(self):
@@ -138,7 +136,7 @@ class PQReverseDequeueTest(unittest.TestCase):
 
         self.queue.enqueue(Task({'index': 2}), 50)
         self.queue.enqueue(Task({'index': 0}), 25)
-        self.queue.enqueue(Task({'index': 1}), 40)        
+        self.queue.enqueue(Task({'index': 1}), 40)
         self.queue.enqueue(Task({'index': 3}), 100)
 
     def runTest(self):
@@ -152,5 +150,3 @@ class PQReverseDequeueTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-

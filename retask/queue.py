@@ -115,7 +115,7 @@ class Queue(object):
         self.rdb = redis.StrictRedis(config['host'], config['port'],
                                      config['db'], config['password'])
         try:
-            info = self.rdb.info()
+            self.rdb.info()
             self.connected = True
         except redis.ConnectionError:
             return False

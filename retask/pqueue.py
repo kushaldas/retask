@@ -38,6 +38,13 @@ import exceptions
 import queue
 import task
 
+
+# ------------- #
+# Module logger #
+
+_log = logging.getLogger(__name__)
+
+
 # -------------- #
 # Event messages #
 
@@ -96,7 +103,8 @@ class PriorityQueue(queue.Queue):
 
         .. note::
 
-            This is a blocking call, you can specity wait_time argument for timeout.
+            This is a blocking call, you can specity wait_time argument
+            for timeout.
 
         """
         # TODO add timeout support
@@ -107,22 +115,25 @@ class PriorityQueue(queue.Queue):
         ps.subscribe(self._wc_name)
         ps_listener = ps.listen()
 
-        data = self._try_pop()
-        while data is None:
-            msg = next(ps_listener)
-            if msg["data"] == _PRIORITY_QUEUE_READY_MSG:
-                data = self._try_pop()
-
-        ps.unsubscribe(self._wc_name)
-        ps.close()
+        try:
+            data = self._try_pop()
+            while data is None:
+                msg = next(ps_listener)
+                if msg["data"] == _PRIORITY_QUEUE_READY_MSG:
+                    data = self._try_pop()
+                else:
+                    _log.error("[PriorityQueue.wait] Unexpected message")
+        finally:
+            ps.unsubscribe(self._wc_name)
+            ps.close()
 
         t = task.Task()
         t.__dict__ = json.loads(data)
 
     def dequeue(self):
         """
-        Returns a :class:`~retask.task.Task` object from the queue. Returns ``None`` if the
-        queue is empty.
+        Returns a :class:`~retask.task.Task` object from the queue. Returns
+        ``None`` if the queue is empty.
 
         :return: :class:`~retask.task.Task` object from the queue
 
@@ -145,11 +156,11 @@ class PriorityQueue(queue.Queue):
 
     def enqueue(self, task, priority):
         """
-        Enqueues the given :class:`~retask.task.Task` object to the queue and returns
-        a :class:`~retask.queue.Job` object.
+        Enqueues the given :class:`~retask.task.Task` object to the queue
+        and returns a :class:`~retask.queue.Job` object.
 
         :arg task: ::class:`~retask.task.Task` object
-        :arg priority: 
+        :arg priority:
 
         :return: :class:`~retask.queue.Job` object
 
@@ -172,15 +183,15 @@ class PriorityQueue(queue.Queue):
             raise exceptions.ConnectionError(str(e))
 
     def find(self, obj):
-        """Returns the index of the given object in the queue, it might be string
-        which will be searched inside each task.
+        """Returns the index of the given object in the queue, it might
+        be string which will be searched inside each task.
 
         :arg obj: object we are looking
 
         :return: -1 if the object is not found or else the location of the task
         """
         if not self.connected:
-            raise ConnectionError('Queue is not connected')
+            raise exceptions.ConnectionError('Queue is not connected')
 
         data = self.rdb.zrange(self._name, 0, -1)
         for i, datum in enumerate(data):
@@ -190,7 +201,7 @@ class PriorityQueue(queue.Queue):
 
     def _try_pop(self):
         # pyredis 2.7.2 transactions do not support 'value_from_callable'
-        # A callable class is used as a workarround to this issue
+        # A callable class is used as solution
         class _Transaction(object):
 
             def __init__(self, name, reverse_order):
@@ -198,9 +209,10 @@ class PriorityQueue(queue.Queue):
                 self.reverse_order = reverse_order
                 self.result = None
 
-            def __call__(self, pipe):  # this is the transaction function
-                range_func = pipe.zrange if self.reverse_order else pipe.zrevrange
-                elements = range_func(self.name, 0, 0, withscores=False)
+            def __call__(self, pipe):  # transaction function
+                range_fn = pipe.zrange if self.reverse_order else \
+                    pipe.zrevrange
+                elements = range_fn(self.name, 0, 0, withscores=False)
                 if elements:
                     pipe.multi()
                     pipe.zrem(self.name, *elements)

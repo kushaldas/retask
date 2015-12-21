@@ -107,7 +107,7 @@ class PQEnqueueTest(unittest.TestCase):
         self.queue.rdb.delete(self.queue._name)
 
 
-class PQDequeueTest(unittest.TestCase):
+class PQDequeueOrderTest(unittest.TestCase):
     """
     Gets tasks from the Queue
 
@@ -130,7 +130,7 @@ class PQDequeueTest(unittest.TestCase):
         self.queue.rdb.delete(self.queue._name)
 
 
-class PQReverseDequeueTest(unittest.TestCase):
+class PQReverseDequeueOrderTest(unittest.TestCase):
     """
     Gets tasks from the Queue in reverse order
 
@@ -160,14 +160,14 @@ class PQWaitTimeoutTest(unittest.TestCase):
     """
     def setUp(self):
         self.queue = PriorityQueue('wait_timeout_test_queue')
+        self.timer = threading.Timer(1, self.addTask)
         self.queue.connect()
 
     def runTest(self):
         t = self.queue.wait(wait_time=1)
         self.assertFalse(t)
 
-        timer = threading.Timer(1, self.addTask)
-        timer.start()
+        self.timer.start()
         t = self.queue.wait(wait_time=5)
         self.assertEqual(t.data['text'], 'timeout ...')
 
@@ -184,11 +184,11 @@ class PQWaitTest(unittest.TestCase):
     """
     def setUp(self):
         self.queue = PriorityQueue('wait_no_timeout_test_queue')
+        self.timer = threading.Timer(3, self.addTask)
         self.queue.connect()
 
     def runTest(self):
-        timer = threading.Timer(3, self.addTask)
-        timer.start()
+        self.timer.start()
 
         t = self.queue.wait()
         self.assertEqual(t.data['text'], 'waiting ...')
@@ -199,6 +199,42 @@ class PQWaitTest(unittest.TestCase):
     def addTask(self):
         self.queue.enqueue(Task({'text': 'waiting ...'}), 10)
 
+
+class PQWaitTestMultipleConsumers(unittest.TestCase):
+    """
+    Two threads infinitely waiting for a task.
+
+    """
+    def setUp(self):
+        self.queue = PriorityQueue('wait_nto_consumers_test_queue')
+        self.timer1 = threading.Timer(1.5, self.addTask1)
+        self.timer2 = threading.Timer(2.5, self.addTask2)
+        self.expected_msgs = frozenset(['waiting1', 'waiting2'])
+        self.queue.connect()
+
+    def runTest(self):
+        self.timer1.start()
+        self.timer2.start()
+
+        t1 = threading.Thread(target=self.waitTask)
+        t2 = threading.Thread(target=self.waitTask)
+        t1.start()
+        t2.start()
+        t1.join()
+        t2.join()
+
+    def addTask1(self):
+        self.queue.enqueue(Task({'text': 'waiting1'}), 10)
+
+    def addTask2(self):
+        self.queue.enqueue(Task({'text': 'waiting2'}), 20)
+
+    def waitTask(self):
+        t = self.queue.wait()
+        self.assertTrue(t.data['text'] in self.expected_msgs)
+
+    def tearDown(self):
+        self.queue.rdb.delete(self.queue._name)
 
 
 if __name__ == '__main__':

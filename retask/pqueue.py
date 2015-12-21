@@ -132,7 +132,8 @@ class PriorityQueue(queue.Queue):
                 if msg['data'] == _PRIORITY_QUEUE_READY_MSG:
                     data = self._try_pop()
                 else:  # raise?
-                    _log.error("PriorityQueue.wait: Unexpected message")
+                    _log.error("PriorityQueue.wait: Unexpected message\n%s",
+                               str(msg))
 
         ps.unsubscribe(self._wc_name)
         ps.close()

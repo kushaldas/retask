@@ -79,7 +79,7 @@ class GetQueueNamesTest(unittest.TestCase):
         queue = Queue('lambda')
         queue.connect()
         results = queue.names()
-        self.assertEqual(results[0], 'retaskqueue-lambda')
+        self.assertEqual(results[0], 'lambda')
 
     def tearDown(self):
         rdb = redis.Redis()

@@ -19,7 +19,7 @@
 #SOFTWARE.
 
 __author__ = 'Kushal Das <kushaldas@gmail.com>'
-__copyright__ = 'Copyright (c) 2012-2015 Kushal Das'
+__copyright__ = 'Copyright (c) 2012-2016 Kushal Das'
 __license__ = 'MIT'
 __status__ = 'Production/Stable'
 __version__ = '1.0'
@@ -59,7 +59,12 @@ class Queue(object):
         self.connected = False
 
     def names(self):
-        data = ""
+        """
+        Returns a list of queues available, ``None`` if no such
+        queues found. Remember this will only shows queues with
+        at least one item enqueued.
+        """
+        data = None
         if not self.connected:
             raise ConnectionError('Queue is not connected')
 
@@ -68,7 +73,7 @@ class Queue(object):
         except redis.exceptions.ConnectionError as err:
             raise ConnectionError(str(err))
 
-        return data
+        return [name[12:] for name in data]
 
     @property
     def length(self):

@@ -19,7 +19,7 @@
 #SOFTWARE.
 
 __author__ = 'Kushal Das <kushaldas@gmail.com>'
-__copyright__ = 'Copyright (c) 2012-2015 Kushal Das'
+__copyright__ = 'Copyright (c) 2012-2016 Kushal Das'
 __license__ = 'MIT'
 __status__ = 'Production/Stable'
 __version__ = '1.0'

@@ -23,9 +23,9 @@ async_producer.py
     task1 = Task(info1)
     queue.connect()
     job = queue.enqueue(task1)
-    print job.result
+    print(job.result)
     time.sleep(30)
-    print job.result
+    print(job.result)
 
 
 Here queue.enqueue method returns a :class:`~retask.queue.Job` object. We can access job.result
@@ -43,7 +43,7 @@ async_consumer.py
     queue = Queue('example')
     queue.connect()
     task = queue.wait()
-    print task.data
+    print(task.data)
     time.sleep(15)
     queue.send(task, "We received your information dear %s" % task.data['user'])
 
@@ -67,7 +67,7 @@ Synchronous / blocking wait for the result
     queue.connect()
     job = queue.enqueue(task1)
     job.wait()
-    print job.result
+    print(job.result)
 
 In this example we are using :func:`~retask.queue.Job.wait` function to do a blocking
 synchronous call to the worker.

@@ -12,7 +12,7 @@
 # serve to show the default.
 
 import sys, os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+sys.path.insert(0, os.path.dirname(__file__))
 
 sys.path.append(os.path.abspath('_themes'))
 html_theme_path = ['_themes']

@@ -19,10 +19,10 @@
 #SOFTWARE.
 
 __author__ = 'Kushal Das <kushaldas@gmail.com>'
-__copyright__ = 'Copyright (c) 2012-2016 Kushal Das'
+__copyright__ = 'Copyright (c) 2012-2023 Kushal Das'
 __license__ = 'MIT'
 __status__ = 'Production/Stable'
-__version__ = '1.0'
+__version__ = '1.1.0'
 
 """
 retask Queue implementation
@@ -31,10 +31,12 @@ retask Queue implementation
 import json
 import redis
 import uuid
-import six
+
+from redis.client import Redis
 from .task import Task
 from .exceptions import ConnectionError
 
+from typing import Optional, Any, Union
 
 class Queue(object):
     """
@@ -44,8 +46,7 @@ class Queue(object):
     to the localhost.
 
     """
-    def __init__(self, name, config=None):
-        specified_config = config or {}
+    def __init__(self, name: str, config: Optional[dict[str,Any]]= None):
         self.name = name
         self._name = 'retaskqueue-' + name
         self.config = {
@@ -54,11 +55,12 @@ class Queue(object):
             'db': 0,
             'password': None,
         }
-        self.config.update(specified_config)
-        self.rdb = None
-        self.connected = False
+        if config:
+            self.config.update(config)
+        self.rdb: Redis[bytes]
+        self.connected: bool = False
 
-    def names(self):
+    def names(self) -> list[bytes]:
         """
         Returns a list of queues available, ``None`` if no such
         queues found. Remember this will only show queues with
@@ -76,7 +78,7 @@ class Queue(object):
         return [name[12:] for name in data]
 
     @property
-    def length(self):
+    def length(self) -> int:
         """
         Gives the length of the queue. Returns ``None`` if the queue is not
         connected.
@@ -95,7 +97,7 @@ class Queue(object):
 
         return length
 
-    def connect(self):
+    def connect(self) -> bool:
         """
         Creates the connection with the redis server.
         Return ``True`` if the connection works, else returns
@@ -127,7 +129,7 @@ class Queue(object):
 
         return True
 
-    def wait(self, wait_time=0):
+    def wait(self, wait_time=0) -> Union[Task, bool]:
         """
         Returns a :class:`~retask.task.Task` object from the queue. Returns ``False`` if it timeouts.
 
@@ -161,7 +163,7 @@ class Queue(object):
         else:
             return False
 
-    def dequeue(self):
+    def dequeue(self) -> Optional[Task]:
         """
         Returns a :class:`~retask.task.Task` object from the queue. Returns ``None`` if the
         queue is empty.
@@ -191,10 +193,11 @@ class Queue(object):
         data = self.rdb.rpop(self._name)
         if not data:
             return None
-        if isinstance(data, six.binary_type):
-            data = six.text_type(data, 'utf-8', errors = 'replace')
+        # redis returns bytes
+        sdata = data.decode("utf-8")
+
         task = Task()
-        task.__dict__ = json.loads(data)
+        task.__dict__ = json.loads(sdata)
         return task
 
     def enqueue(self, task):
@@ -233,7 +236,7 @@ class Queue(object):
             return False
         return job
 
-    def send(self, task, result, expire=60):
+    def send(self, task: Task, result, expire: int=60):
         """
         Sends the result back to the producer. This should be called if only you
         want to return the result in async manner.

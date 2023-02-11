@@ -61,7 +61,7 @@ class Queue(object):
     def names(self):
         """
         Returns a list of queues available, ``None`` if no such
-        queues found. Remember this will only shows queues with
+        queues found. Remember this will only show queues with
         at least one item enqueued.
         """
         data = None

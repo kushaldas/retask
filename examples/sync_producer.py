@@ -6,4 +6,4 @@ task1 = Task(info1)
 queue.connect()
 job = queue.enqueue(task1)
 job.wait()
-print job.result
+print(job.result)

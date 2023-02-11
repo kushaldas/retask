@@ -142,7 +142,7 @@ class Queue(object):
            >>> q.connect()
            True
            >>> task = q.wait()
-           >>> print task.data
+           >>> print(task.data)
            {u'name': u'kushal'}
 
         .. note::
@@ -178,7 +178,7 @@ class Queue(object):
            >>> q.connect()
            True
            >>> t = q.dequeue()
-           >>> print t.data
+           >>> print(t.data)
            {u'name': u'kushal'}
 
         """

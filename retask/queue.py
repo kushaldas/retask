@@ -264,9 +264,13 @@ class Queue(object):
         if not self.connected:
             raise ConnectionError('Queue is not connected')
 
+        str_obj = str(obj)
         data = self.rdb.lrange(self._name, 0, -1)
         for i, datum in enumerate(data):
-            if datum.find(str(obj)) != -1:
+            if isinstance(datum, six.binary_type):
+                if str_obj in six.text_type(datum, 'utf-8', errors='replace'):
+                    return i
+            elif datum.find(str_obj) != -1:
                 return i
         return -1
 

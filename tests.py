@@ -85,6 +85,27 @@ class GetQueueNamesTest(unittest.TestCase):
         rdb = redis.Redis()
         rdb.delete('retaskqueue-lambda')
 
+
+class FindObjQueueTest(unittest.TestCase):
+    """
+    Finds the index of the given object in the Queue
+
+    """
+    def setUp(self):
+        self.queue = Queue('findTest')
+        self.queue.connect()
+        t = Task({'name': 'mytask'})
+        self.queue.enqueue(t)
+
+    def runTest(self):
+        task_idx = self.queue.find('mytask')
+        self.assertEqual(task_idx, 0)
+
+    def tearDown(self):
+        rdb = redis.Redis()
+        rdb.delete('retaskqueue-findTest')
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -12,14 +12,7 @@ Distribute & Pip
 
 Installing requests is simple with `pip <http://www.pip-installer.org/>`_::
 
-    $ pip install retask
-
-or, with `easy_install <http://pypi.python.org/pypi/setuptools>`_::
-
-    $ easy_install retask
-
-But, you really `shouldn't do that <http://www.pip-installer.org/en/latest/other-tools.html#pip-compared-to-easy-install>`_.
-
+    $ python3 -m pip install retask
 
 
 Get the Code
@@ -32,19 +25,18 @@ You can either clone the public repository::
 
     git clone git://github.com/kushaldas/retask.git
 
-Download the `tarball <https://github.com/kushaldas/retask/tarball/master>`_::
+Download the `tarball <https://github.com/kushaldas/retask/tarball/main>`_::
 
-    $ curl -OL https://github.com/kushaldas/retask/tarball/master
+    $ curl -OL https://github.com/kushaldas/retask/tarball/main
 
-Or, download the `zipball <https://github.com/kushaldas/retask/zipball/master>`_::
+Or, download the `zipball <https://github.com/kushaldas/retask/zipball/main>`_::
 
-    $ curl -OL https://github.com/kushaldas/retask/tarball/master
+    $ curl -OL https://github.com/kushaldas/retask/tarball/main
 
 
-Once you have a copy of the source, you can embed it in your Python package,
-or install it into your site-packages easily::
+Then build via using `flit <https://flit.pypa.io/en/latest/index.html>`_ tool.::
 
-    $ python setup.py install
+    $ flit build
 
 .. _redis:
 
@@ -54,4 +46,4 @@ Installing redis-py
 
 You can install ``redis-py`` with ``pip``::
 
-    $ pip install redis
+    $ python3 -m pip install redis

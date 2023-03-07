@@ -1,0 +1,35 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+
+[project]
+name='retask'
+description='Task Queue implementation in python using redis.'
+authors = [
+  {name = "Kushal Das", email = "mail@kushaldas.in"},
+]
+license= { file="LICENSE" }
+readme= "README.rst"
+classifiers=[
+          'Development Status :: 6 - Mature',
+          'Topic :: Software Development :: Libraries',
+          'License :: OSI Approved :: MIT License',
+          'Topic :: System :: Distributed Computing',
+          'Programming Language :: Python :: 3.9',
+          'Programming Language :: Python :: 3.10',
+          'Programming Language :: Python :: 3.11',
+          ]
+requires-python= ">=3.9"
+dynamic= ["version",]
+
+dependencies = [
+  "redis"
+]
+[project.urls]
+Source='https://github.com/kushaldas/retask'
+Documentation = "https://retask.readthedocs.io/en/latest/"
+
+
+[tool.flit.sdist]
+include = ["LICENSE",]

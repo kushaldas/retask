@@ -10,7 +10,7 @@ authors = [
   {name = "Kushal Das", email = "mail@kushaldas.in"},
 ]
 license= { file="LICENSE" }
-readme= "README.rst"
+readme= "README.md"
 classifiers=[
           'Development Status :: 6 - Mature',
           'Topic :: Software Development :: Libraries',

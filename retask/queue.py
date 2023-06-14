@@ -264,9 +264,13 @@ class Queue(object):
         if not self.connected:
             raise ConnectionError('Queue is not connected')
 
+        str_obj = str(obj)
         data = self.rdb.lrange(self._name, 0, -1)
         for i, datum in enumerate(data):
-            if datum.find(str(obj)) != -1:
+            if isinstance(datum, bytes):
+                if str_obj in datum.decode("utf-8"):
+                    return i
+            elif datum.find(str_obj) != -1:
                 return i
         return -1
 

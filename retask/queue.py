@@ -267,8 +267,8 @@ class Queue(object):
         str_obj = str(obj)
         data = self.rdb.lrange(self._name, 0, -1)
         for i, datum in enumerate(data):
-            if isinstance(datum, six.binary_type):
-                if str_obj in six.text_type(datum, 'utf-8', errors='replace'):
+            if isinstance(datum, bytes):
+                if str_obj in datum.decode("utf-8"):
                     return i
             elif datum.find(str_obj) != -1:
                 return i
